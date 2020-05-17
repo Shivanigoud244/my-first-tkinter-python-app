@@ -127,7 +127,7 @@ class db_class():
         try:
 
             cur = self.mycon.cursor()
-            sql = "select * from MT_Hospital "
+            sql = "select * from MT_Hospital order by Hospital_Id "
             cur.execute(sql)
             hosp_details = cur.fetchall()
             if hosp_details:

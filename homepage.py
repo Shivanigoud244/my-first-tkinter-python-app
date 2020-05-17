@@ -216,25 +216,41 @@ def func_get_doc_detail_by_hospital_id(doc_id):
     if doc_detail_data_list is not None:
         Label(update_doc_detail_by_id_frame, text="Doctor ID").grid(row=0, column=0)
         Label(update_doc_detail_by_id_frame, text="Doctor Name").grid(row=1, column=0)
-        Label(update_doc_detail_by_id_frame, text="Hospital Id").grid(row=2, column=0)
+        Label(update_doc_detail_by_id_frame, text="Hospital").grid(row=2, column=0)
         Label(update_doc_detail_by_id_frame, text="Joining Date").grid(row=3, column=0)
         Label(update_doc_detail_by_id_frame, text="Specialization").grid(row=4, column=0)
         Label(update_doc_detail_by_id_frame, text="Salary").grid(row=5, column=0)
         Label(update_doc_detail_by_id_frame, text="Experience").grid(row=6, column=0)
         Label(update_doc_detail_by_id_frame, text=str(doc_detail_data_list._doctor_Id)).grid(row=0, column=1)
         upe1 = tkinter.StringVar()
-        upe2 = tkinter.StringVar()
+        #upe2 = tkinter.StringVar()
         e1 = Entry(update_doc_detail_by_id_frame, text=upe1)
         e1.grid(row=1, column=1)
         upe1.set(doc_detail_data_list._doctor_name)
-        e2 = Entry(update_doc_detail_by_id_frame, text=upe2)
-        e2.grid(row=2, column=1)
-        upe2.set(str(doc_detail_data_list._hospital_Id))
-        #upe3 = tkinter.StringVar()
+        #e2 = Entry(update_doc_detail_by_id_frame, text=upe2)
+        #e2.grid(row=2, column=1)
+
+        OptionList = []
+        hosp_db_object = hosp_doc_db_name_space.db_class()
+        hfl = hosp_db_object.read_hospital_fulllist()
+
+        if hfl is not None:
+            for x in hfl:
+                OptionList.append(str(x[0]) + ", \t" + str(x[1]))
+
+        variable = StringVar(update_doc_detail_by_id_frame)
+        variable.set("Select Hospital")
+
+        opt = OptionMenu(update_doc_detail_by_id_frame, variable, *OptionList)
+        opt.config()
+        opt.grid(row=2, column=1)
+
+        #upe2.set(str(doc_detail_data_list._hospital_Id))
+        # upe3 = tkinter.StringVar()
         upe4 = tkinter.StringVar()
-        #e3 = Entry(update_doc_detail_by_id_frame, text=upe3)
-        #e3.grid(row=3, column=1)
-        #upe3.set(doc_detail_data_list._joining_date)
+        # e3 = Entry(update_doc_detail_by_id_frame, text=upe3)
+        # e3.grid(row=3, column=1)
+        # upe3.set(doc_detail_data_list._joining_date)
         cal = DateEntry(update_doc_detail_by_id_frame, width=12, background='darkblue',
                         foreground='white', borderwidth=2, locale='en_US', date_pattern='y-mm-dd')
         cal.grid(row=3, column=1)
@@ -250,7 +266,7 @@ def func_get_doc_detail_by_hospital_id(doc_id):
         e6.grid(row=6, column=1)
         upe6.set(str(doc_detail_data_list._experience))
         Button(update_doc_detail_by_id_frame, text="update",
-               command=lambda: func_update_doc_detail(doc_detail_data_list._doctor_Id, e1.get(), e2.get(), cal.get(),
+               command=lambda: func_update_doc_detail(doc_detail_data_list._doctor_Id, e1.get(), variable.get().partition(",")[0], cal.get(),
                                                       e4.get(), e5.get(), e6.get())).grid(row=7, column=0)
 
 
@@ -353,10 +369,26 @@ def func_doc_add_details():
     doctor_name.grid(row=2, column=0)
     e2 = Entry(doc_add_details_frame)
     e2.grid(row=2, column=1)
-    hospital_id = Label(doc_add_details_frame, text="Hospital Id")
+
+    hospital_id = Label(doc_add_details_frame, text="Hospital")
     hospital_id.grid(row=3, column=0)
-    e3 = Entry(doc_add_details_frame)
-    e3.grid(row=3, column=1)
+    # e3 = Entry(doc_add_details_frame)
+    # e3.grid(row=3, column=1)
+    OptionList = []
+    hosp_db_object = hosp_doc_db_name_space.db_class()
+    hfl = hosp_db_object.read_hospital_fulllist()
+
+    if hfl is not None:
+        for x in hfl:
+            OptionList.append(str(x[0]) + ", \t" + str(x[1]))
+
+    variable = StringVar(doc_add_details_frame)
+    variable.set("Select Hospital")
+
+    opt = OptionMenu(doc_add_details_frame, variable, *OptionList)
+    opt.config()
+    opt.grid(row=3, column=1)
+
     specialization = Label(doc_add_details_frame, text="Speciality")
     specialization.grid(row=4, column=0)
     e4 = Entry(doc_add_details_frame)
@@ -371,14 +403,14 @@ def func_doc_add_details():
     e6.grid(row=6, column=1)
     dateofJoining: Label = Label(doc_add_details_frame, text="Date of Joining")
     dateofJoining.grid(row=7, column=0)
-    #e7 = Entry(doc_add_details_frame)
-    #e7.grid(row=7, column=1)
+    # e7 = Entry(doc_add_details_frame)
+    # e7.grid(row=7, column=1)
     cal = DateEntry(doc_add_details_frame, width=12, background='darkblue',
                     foreground='white', borderwidth=2, locale='en_US', date_pattern='y-mm-dd')
     cal.grid(row=7, column=1)
     """docIdVal, docName, hospIdval, specVal, salaryVal, expVal, dateofjoin"""
     Button(doc_add_details_frame, text="Submit",
-           command=lambda: func_insert_doc_details(e1.get(), e2.get(), e3.get(), e4.get(), e5.get(), e6.get(),
+           command=lambda: func_insert_doc_details(e1.get(), e2.get(), variable.get().partition(",")[0], e4.get(), e5.get(), e6.get(),
                                                    cal.get())).grid(row=8, column=0)
     Button(doc_add_details_frame, text="Cancel", command=lambda: func_get_doctor_full_list()).grid(row=8,
                                                                                                    column=1)
@@ -401,7 +433,7 @@ doc = Menu(menu_bar_list, tearoff=0)
 doc.add_command(label="List", command=func_get_doctor_full_list)
 doc.add_command(label="Add", command=func_doc_add_details)
 doc.add_command(label="Update", command=func_doc_update_get_hospital_id)
-doc.add_command(label="Delete",command=func_doc_delete_get_hospital_id)
+doc.add_command(label="Delete", command=func_doc_delete_get_hospital_id)
 
 menu_bar_list.add_cascade(label="Doctor", menu=doc)
 
