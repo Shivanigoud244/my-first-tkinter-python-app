@@ -2,6 +2,8 @@ import datetime
 import tkinter
 from tkinter import *
 from tkinter import Label
+import numpy as np
+import matplotlib.pyplot as plt
 
 from tkcalendar import Calendar, DateEntry
 
@@ -15,6 +17,28 @@ hp.geometry("600x300")
 hp.title("Doctors and Hospitals Information")
 frame_home = Frame(hp)
 frame_home.pack()
+
+
+def graph():
+    doc_db_object = hosp_doc_db_name_space.db_class()
+    doc_detail_data_list = doc_db_object.read_doctors_fulllist()
+    """doctor = ['Ridhvika Goud K', 'Raja Rushender Goud K', 'Narasimha Murthy K', 'Shivani Goud G A', 'Simon Praveen Kumar C', 'Anil Kumar Goud G S', 'Fernaz das', 'Nandan Rao', 'Carien Tray', 'RiChard Z']
+    hospital = [124, 124, 121, 121, 121, 122, 124, 125, 125, 121]"""
+    doctor=[]
+    hospital =[]
+    for x in doc_detail_data_list:
+        hospital.append(x[4])
+        doctor.append(x[1])
+
+    #hospital = list(dict.fromkeys(hospital))
+    print(hospital)
+    print(doctor)
+
+    plt.plot(hospital,doctor,'ro')
+    plt.xlabel('Speciality')
+    plt.ylabel('Doctor')
+
+    plt.show()
 
 
 def forget_frames():
@@ -223,12 +247,12 @@ def func_get_doc_detail_by_hospital_id(doc_id):
         Label(update_doc_detail_by_id_frame, text="Experience").grid(row=6, column=0)
         Label(update_doc_detail_by_id_frame, text=str(doc_detail_data_list._doctor_Id)).grid(row=0, column=1)
         upe1 = tkinter.StringVar()
-        #upe2 = tkinter.StringVar()
+        # upe2 = tkinter.StringVar()
         e1 = Entry(update_doc_detail_by_id_frame, text=upe1)
         e1.grid(row=1, column=1)
         upe1.set(doc_detail_data_list._doctor_name)
-        #e2 = Entry(update_doc_detail_by_id_frame, text=upe2)
-        #e2.grid(row=2, column=1)
+        # e2 = Entry(update_doc_detail_by_id_frame, text=upe2)
+        # e2.grid(row=2, column=1)
 
         OptionList = []
         hosp_db_object = hosp_doc_db_name_space.db_class()
@@ -245,7 +269,7 @@ def func_get_doc_detail_by_hospital_id(doc_id):
         opt.config()
         opt.grid(row=2, column=1)
 
-        #upe2.set(str(doc_detail_data_list._hospital_Id))
+        # upe2.set(str(doc_detail_data_list._hospital_Id))
         # upe3 = tkinter.StringVar()
         upe4 = tkinter.StringVar()
         # e3 = Entry(update_doc_detail_by_id_frame, text=upe3)
@@ -266,7 +290,8 @@ def func_get_doc_detail_by_hospital_id(doc_id):
         e6.grid(row=6, column=1)
         upe6.set(str(doc_detail_data_list._experience))
         Button(update_doc_detail_by_id_frame, text="update",
-               command=lambda: func_update_doc_detail(doc_detail_data_list._doctor_Id, e1.get(), variable.get().partition(",")[0], cal.get(),
+               command=lambda: func_update_doc_detail(doc_detail_data_list._doctor_Id, e1.get(),
+                                                      variable.get().partition(",")[0], cal.get(),
                                                       e4.get(), e5.get(), e6.get())).grid(row=7, column=0)
 
 
@@ -410,7 +435,8 @@ def func_doc_add_details():
     cal.grid(row=7, column=1)
     """docIdVal, docName, hospIdval, specVal, salaryVal, expVal, dateofjoin"""
     Button(doc_add_details_frame, text="Submit",
-           command=lambda: func_insert_doc_details(e1.get(), e2.get(), variable.get().partition(",")[0], e4.get(), e5.get(), e6.get(),
+           command=lambda: func_insert_doc_details(e1.get(), e2.get(), variable.get().partition(",")[0], e4.get(),
+                                                   e5.get(), e6.get(),
                                                    cal.get())).grid(row=8, column=0)
     Button(doc_add_details_frame, text="Cancel", command=lambda: func_get_doctor_full_list()).grid(row=8,
                                                                                                    column=1)
@@ -449,6 +475,11 @@ dbv = Menu(menu_bar_list, tearoff=0)
 dbv.add_command(label="DB Version", command=func_db_version)
 
 menu_bar_list.add_cascade(label="DB Version", menu=dbv)
+
+pl = Menu(menu_bar_list, tearoff=0)
+pl.add_command(label="Graphs", command=graph)
+
+menu_bar_list.add_cascade(label="Graphs", menu=pl)
 
 search_bar = Entry(menu_bar_list)
 search_button = Button(menu_bar_list, text="Cancel")
